@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Danish &amp; Qistina – Check-in</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400;1,6..72,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#fbfaf8;--card:#ffffff;--ink:#161616;--muted:#6b6862;--line:#dedad2;--gold:#b58d35;--gold-soft:#f5edd9;--ok:#4a6b4a;--on-gold:#ffffff;
+  --serif:"Newsreader",Georgia,"Times New Roman",serif;--sans:"Inter","Helvetica Neue",Arial,sans-serif;
+  color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){--bg:#141210;--card:#1d1a16;--ink:#f1ede4;--muted:#a39d91;--line:#38332b;--gold:#d4ad5a;--gold-soft:#2b2415;--ok:#93b893;--on-gold:#141210;color-scheme:dark}
+}
+:root[data-theme="dark"]{--bg:#141210;--card:#1d1a16;--ink:#f1ede4;--muted:#a39d91;--line:#38332b;--gold:#d4ad5a;--gold-soft:#2b2415;--ok:#93b893;--on-gold:#141210;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 var(--sans)}
+.wrap{max-width:520px;margin:0 auto;padding:44px 20px 64px;text-align:center}
+.caps{text-transform:uppercase;letter-spacing:.22em;font-size:.8rem}
+.kicker{color:var(--gold);font-weight:500;margin:0 0 14px}
+h1{font:italic 400 clamp(2.6rem,11vw,3.8rem)/1.05 var(--serif);margin:0 0 18px;letter-spacing:-.01em}
+.where{color:var(--muted);margin:0;font-size:.82rem;letter-spacing:.18em}
+.divider{display:flex;align-items:center;justify-content:center;gap:14px;margin:28px auto 30px;max-width:400px}
+.divider::before,.divider::after{content:"";flex:1;height:1px;background:var(--line)}
+.divider span{width:8px;height:8px;background:var(--gold);transform:rotate(45deg)}
+input,button{font:inherit;color:var(--ink)}
+.field{width:100%;padding:15px 16px;background:var(--card);border:1px solid var(--line);border-radius:10px;text-align:center;font:italic 400 1.25rem var(--serif)}
+.field::placeholder{color:var(--muted);opacity:1}
+.btn{display:block;width:100%;margin-top:12px;padding:15px;background:transparent;border:1px solid var(--line);border-radius:10px;cursor:pointer;text-transform:uppercase;letter-spacing:.24em;font-size:.9rem;font-weight:500;transition:border-color .2s}
+.btn:hover{border-color:var(--gold)}
+.btn.gold{background:var(--gold);border-color:var(--gold);color:var(--on-gold)}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.msg{min-height:1.4em;margin:16px 0 0;color:var(--muted);font-family:var(--serif);font-style:italic;font-size:1.05rem}
+.results{list-style:none;margin:12px 0 0;padding:0;text-align:left}
+.res{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-top:10px}
+.res strong{flex:1;min-width:0;font:500 1.2rem var(--serif);overflow-wrap:anywhere}
+.res .btn{width:auto;margin:0;padding:10px 16px;font-size:.78rem;letter-spacing:.18em}
+.done{color:var(--ok);font-size:.78rem;letter-spacing:.16em;text-transform:uppercase}
+.welcome{margin-top:22px;padding:26px 18px;background:var(--gold-soft);border:1px solid var(--gold);border-radius:12px}
+.welcome h2{font:italic 400 2rem/1.15 var(--serif);margin:6px 0 10px;overflow-wrap:anywhere}
+.welcome p{margin:0;color:var(--muted)}
+.foot{margin-top:56px;padding-top:16px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:12px;color:var(--muted);font-size:.85rem}
+.foot button{background:none;border:0;color:var(--muted);text-decoration:underline;cursor:pointer;padding:6px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <p class="caps kicker">Tying the knot</p>
+  <h1>Danish &amp; Qistina</h1>
+  <p class="caps where">Grand Hyatt Singapore</p>
+  <div class="divider" aria-hidden="true"><span></span></div>
+
+  <form id="find" autocomplete="off">
+    <label for="q" style="position:absolute;left:-9999px">Your name</label>
+    <input class="field" id="q" type="text" placeholder="Your name…">
+    <button class="btn" type="submit">Find</button>
+  </form>
+  <p class="msg" id="msg" aria-live="polite"></p>
+  <ul class="results" id="results"></ul>
+  <div id="welcome" aria-live="polite"></div>
+
+  <div class="foot">
+    <span><span id="cin">0</span> of <span id="ctot">0</span> checked in</span>
+    <button id="csv" type="button">Download list</button>
+  </div>
+</main>
+
+<script>
+(function(){
+  var NAMES=["Danish Iryandy", "Qistina Imran", "Hantu Makkau", "Alif Tan", "Mira Lim", "Johan Ng", "Siti Lee", "Faris Wong", "Leena Koh", "Hakim Goh", "Aina Chua", "Amir Yeo", "Sara Ong", "Zaki Teo", "Nadia Ho", "Hafiz Kwan", "Bella Cheong", "Yusof Tay", "Izzah Low", "Raihan Seow", "Sofea Sim", "Faiz Chng", "Nurul Pang", "Danishah Loh", "Sophia Foo", "Felix Chan", "Nora Lai", "Daniel Chew", "Anna Ang", "Amir Quek", "Sarah Soon", "Zach Tanaka", "Natalie Suzuki", "Henry Sato", "Bella Kim", "Joseph Park", "Isabel Nguyen", "Ryan Tran", "Felix Ali", "Sophia Hassan", "Felix Ibrahim", "Nora Khan", "Daniel Singh", "Anna Patel", "Calum Hood", "Micheal Clifford", "Ashton Irwin", "Luke Hemmings", "Aiden Fernandez", "Sophia Ramirez", "Lucas Gutierrez", "Emma Mendoza", "Noah Salazar", "Olivia Vargas", "Ethan Navarro", "Mia Castillo", "Liam Delgado", "Ava Reyes", "Mason Morales", "Isabella Cruz", "Logan Santos", "Charlotte Rivera", "James Ortiz", "Amelia Flores", "Benjamin Ramos", "Harper Vasquez", "Elijah Torres", "Evelyn Molina", "Daniel Acosta", "Abigail Silva", "Matthew Pereira", "Ella Costa", "Jackson Ribeiro", "Scarlett Almeida", "Sebastian Moreira", "Grace Barbosa", "David Nakamura", "Chloe Yamamoto", "Joseph Kobayashi", "Lily Watanabe", "Samuel Ito", "Aria Fujita", "Henry Mori", "Layla Sakamoto", "Owen Okada", "Zoey Hassan", "Wyatt Abdullah", "Nora Mahmoud", "Jack Farouk", "Hannah Zaki", "Leo Hussein", "Avery Omar", "Julian Youssef", "Sofia Rahman", "Luke Chowdhury", "Camila Ahmed", "Isaac Das", "Aurora Bose", "Gabriel Iyer", "Victoria Reddy", "Anthony Sharma", "Riley Mehta", "Dylan Kapoor", "Penelope Verma", "Andrew Cheng", "Luna Zhang", "Joshua Liu", "Ellie Wang", "Christopher Chen", "Stella Huang", "Nathan Lin", "Hazel Zhou", "Caleb Wu", "Paisley Li", "Ryan Xu", "Violet Zhao", "Adrian Yang", "Naomi Sun", "Thomas Gupta", "Elena Nair"];
+  var KEY="dq-checkin-v2", seen={}, $=function(i){return document.getElementById(i)};
+  try{seen=JSON.parse(localStorage.getItem(KEY))||{}}catch(e){seen={}}
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(seen))}catch(e){}}
+  function norm(s){return s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/\s+/g," ").trim()}
+  function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+  var guests=NAMES.map(function(n,i){return{id:i,name:n,key:norm(n)}});
+
+  function count(){$("cin").textContent=Object.keys(seen).length;$("ctot").textContent=guests.length}
+  function show(list){
+    $("results").innerHTML=list.map(function(g){
+      return '<li class="res"><strong>'+esc(g.name)+'</strong>'+
+        (seen[g.id]?'<span class="done">Checked in</span>':'<button class="btn gold" data-in="'+g.id+'" type="button">Check in</button>')+'</li>';
+    }).join("");
+  }
+  $("find").addEventListener("submit",function(e){
+    e.preventDefault();$("welcome").innerHTML="";
+    var q=norm($("q").value);
+    if(q.length<2){$("msg").textContent="Please type at least two letters of your name.";$("results").innerHTML="";return}
+    var parts=q.split(" ");
+    var hits=guests.filter(function(g){return parts.every(function(p){return g.key.indexOf(p)>-1})});
+    if(!hits.length){$("msg").textContent="We couldn’t find that name. Try your first name only, or ask the usher.";$("results").innerHTML="";return}
+    $("msg").textContent=hits.length===1?"Is this you?":"Which one is you?";
+    show(hits.slice(0,12));
+  });
+  $("results").addEventListener("click",function(e){
+    var b=e.target.closest("[data-in]");if(!b)return;
+    var g=guests[+b.dataset.in];
+    if(!seen[g.id]){seen[g.id]=Date.now();save()}
+    $("results").innerHTML="";$("msg").textContent="";$("q").value="";count();
+    $("welcome").innerHTML='<div class="welcome"><p class="caps kicker" style="margin-bottom:0">Welcome</p><h2>'+esc(g.name)+'</h2><p>You’re checked in. Thank you for celebrating with us.</p></div>';
+  });
+  $("csv").addEventListener("click",function(){
+    var rows=[["Name","Status","Checked in at"]].concat(guests.map(function(g){return[g.name,seen[g.id]?"Checked in":"Not yet",seen[g.id]?new Date(seen[g.id]).toLocaleString():""]}));
+    var csv=rows.map(function(r){return r.map(function(c){return '"'+String(c).replace(/"/g,'""')+'"'}).join(",")}).join("\n");
+    var a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv"}));a.download="attendance.csv";a.click();
+  });
+  count();
+})();
+</script>
+</body>
+</html>
